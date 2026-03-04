@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MonSiteCom — Éditeur de site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f13;--panel:#18181f;--panel2:#1f1f28;--border:rgba(255,255,255,0.07);
+  --accent:#e8540a;--accent2:#ff6820;--green:#22c55e;--blue:#3b82f6;
+  --text:#f0ede8;--muted:#888;--white:#fff;
+  --font-d:'Syne',sans-serif;--font-b:'Instrument Sans',sans-serif;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);display:flex;flex-direction:column}
+
+/* ══ TOP BAR ══ */
+.topbar{
+  height:52px;background:var(--panel);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1rem;flex-shrink:0;z-index:200;gap:1rem;
+}
+.tb-logo{font-family:var(--font-d);font-weight:800;font-size:1.1rem;color:var(--white);text-decoration:none;white-space:nowrap}
+.tb-logo span{color:var(--accent)}
+.tb-center{display:flex;align-items:center;gap:.4rem;flex:1;justify-content:center}
+.tb-page-btn{
+  background:none;border:1px solid var(--border);color:var(--muted);
+  padding:.35rem .8rem;border-radius:6px;font-size:.78rem;cursor:pointer;
+  font-family:var(--font-b);transition:all .2s;white-space:nowrap;
+}
+.tb-page-btn:hover,.tb-page-btn.active{background:var(--accent);color:var(--white);border-color:var(--accent)}
+.tb-right{display:flex;align-items:center;gap:.6rem}
+.btn-preview{background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:.4rem .9rem;border-radius:6px;font-size:.8rem;cursor:pointer;font-family:var(--font-b);transition:all .2s}
+.btn-preview:hover{border-color:var(--muted)}
+.btn-publish{background:var(--accent);color:var(--white);border:none;padding:.4rem 1.1rem;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:var(--font-b);transition:background .2s}
+.btn-publish:hover{background:var(--accent2)}
+.device-btns{display:flex;gap:2px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:2px}
+.dev-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:.3rem .5rem;border-radius:4px;font-size:.85rem;transition:all .2s}
+.dev-btn.active,.dev-btn:hover{background:var(--accent);color:var(--white)}
+
+/* ══ MAIN LAYOUT ══ */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* ══ LEFT SIDEBAR ══ */
+.sidebar-left{
+  width:56px;background:var(--panel);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;padding:.5rem 0;gap:.3rem;
+  flex-shrink:0;z-index:100;
+}
+.sb-btn{
+  width:40px;height:40px;border-radius:8px;border:none;background:none;
+  color:var(--muted);cursor:pointer;font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;position:relative;
+}
+.sb-btn:hover,.sb-btn.active{background:rgba(232,84,10,.15);color:var(--accent)}
+.sb-btn[title]:hover::after{
+  content:attr(title);position:absolute;left:calc(100% + 8px);top:50%;
+  transform:translateY(-50%);background:#333;color:#fff;
+  padding:.25rem .6rem;border-radius:4px;font-size:.72rem;white-space:nowrap;
+  pointer-events:none;z-index:999;
+}
+.sb-sep{width:32px;height:1px;background:var(--border);margin:.3rem 0}
+
+/* ══ LEFT PANEL ══ */
+.left-panel{
+  width:0;background:var(--panel);border-right:1px solid var(--border);
+  overflow:hidden;transition:width .25s ease;flex-shrink:0;
+}
+.left-panel.open{width:280px}
+.lp-inner{width:280px;height:100%;overflow-y:auto;padding:1rem}
+.lp-inner::-webkit-scrollbar{width:3px}
+.lp-inner::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.lp-title{font-family:var(--font-d);font-size:.85rem;font-weight:700;margin-bottom:1rem;color:var(--text);letter-spacing:.05em;text-transform:uppercase}
+
+/* Form elements */
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+.field input,.field textarea,.field select{
+  width:100%;background:var(--panel2);border:1px solid var(--border);
+  color:var(--text);padding:.6rem .8rem;border-radius:6px;
+  font-family:var(--font-b);font-size:.85rem;outline:none;transition:border-color .2s;
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
+.field textarea{min-height:70px;resize:vertical;line-height:1.5}
+
+/* Color row */
+.color-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem}
+.csw{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.csw:hover{transform:scale(1.15)}
+.csw.sel{border-color:var(--white);transform:scale(1.2)}
+
+/* Page manager */
+.page-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.6rem .8rem;background:var(--panel2);border:1px solid var(--border);
+  border-radius:8px;margin-bottom:.5rem;cursor:pointer;transition:all .2s;
+}
+.page-item:hover,.page-item.active{border-color:var(--accent);background:rgba(232,84,10,.08)}
+.page-item-left{display:flex;align-items:center;gap:.6rem;font-size:.85rem}
+.page-item-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;transition:color .2s}
+.page-item-del:hover{color:#ef4444}
+.btn-add-page{
+  width:100%;background:none;border:1px dashed var(--border);color:var(--muted);
+  padding:.6rem;border-radius:8px;cursor:pointer;font-family:var(--font-b);
+  font-size:.82rem;transition:all .2s;margin-top:.5rem;
+}
+.btn-add-page:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Blocks list */
+.block-list{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.block-thumb{
+  background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  padding:.7rem;text-align:center;cursor:grab;transition:all .2s;
+}
+.block-thumb:hover{border-color:var(--accent);background:rgba(232,84,10,.08)}
+.block-thumb-icon{font-size:1.3rem;display:block;margin-bottom:.3rem}
+.block-thumb span{font-size:.7rem;color:var(--muted)}
+
+/* Photos */
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.photo-thumb{
+  aspect-ratio:1;background:var(--panel2);border:1px solid var(--border);
+  border-radius:6px;overflow:hidden;cursor:pointer;transition:border-color .2s;
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;
+  position:relative;
+}
+.photo-thumb:hover{border-color:var(--accent)}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.upload-zone{
+  grid-column:span 2;border:1px dashed var(--border);border-radius:8px;
+  padding:1.2rem;text-align:center;cursor:pointer;transition:all .2s;
+}
+.upload-zone:hover{border-color:var(--accent);background:rgba(232,84,10,.05)}
+.upload-zone input{display:none}
+
+/* ══ CANVAS AREA ══ */
+.canvas-area{
+  flex:1;background:#2a2a35;overflow:auto;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:2rem;position:relative;
+}
+.canvas-wrap{
+  background:white;width:100%;max-width:1200px;min-height:600px;
+  box-shadow:0 20px 80px rgba(0,0,0,.5);border-radius:4px;
+  position:relative;transition:max-width .3s;
+}
+.canvas-wrap.tablet{max-width:768px}
+.canvas-wrap.mobile{max-width:390px}
+
+/* Editable section */
+.section-wrap{position:relative}
+.section-wrap:hover>.section-overlay{opacity:1}
+.section-overlay{
+  position:absolute;inset:0;pointer-events:none;
+  border:2px solid transparent;transition:all .2s;opacity:0;z-index:10;
+}
+.section-wrap.selected>.section-overlay{
+  border-color:var(--accent);opacity:1;pointer-events:all;
+}
+.section-actions{
+  position:absolute;top:-1px;right:-1px;
+  display:flex;gap:2px;background:var(--accent);border-radius:0 0 0 6px;
+  padding:2px 4px;
+}
+.sa-btn{background:none;border:none;color:white;cursor:pointer;font-size:.75rem;padding:.2rem .3rem;border-radius:3px;transition:background .2s}
+.sa-btn:hover{background:rgba(255,255,255,.2)}
+
+/* Floating inline editor */
+.inline-edit-bar{
+  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:.5rem .8rem;display:flex;align-items:center;gap:.5rem;
+  z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.4);
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.inline-edit-bar.visible{opacity:1;pointer-events:all}
+.ieb-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:.3rem .5rem;border-radius:5px;font-size:.85rem;transition:all .2s;font-family:var(--font-b)}
+.ieb-btn:hover,.ieb-btn.active{background:var(--accent);color:white}
+.ieb-sep{width:1px;height:20px;background:var(--border)}
+.ieb-color{width:22px;height:22px;border-radius:4px;cursor:pointer;border:none}
+.ieb-size{background:var(--panel2);border:1px solid var(--border);color:var(--text);width:50px;padding:.25rem .4rem;border-radius:5px;font-size:.78rem;font-family:var(--font-b);outline:none}
+
+/* ══ RIGHT PANEL ══ */
+.right-panel{
+  width:0;background:var(--panel);border-left:1px solid var(--border);
+  overflow:hidden;transition:width .25s ease;flex-shrink:0;
+}
+.right-panel.open{width:280px}
+.rp-inner{width:280px;height:100%;overflow-y:auto;padding:1rem}
+.rp-inner::-webkit-scrollbar{width:3px}
+.rp-inner::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* Section props */
+.prop-section{margin-bottom:1.2rem}
+.prop-section-title{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.7rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+
+/* Range slider */
+.field input[type=range]{padding:0;height:4px;accent-color:var(--accent);cursor:pointer}
+
+/* Toggle */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.4rem 0}
+.toggle-row span{font-size:.83rem;color:var(--text)}
+.toggle{position:relative;width:38px;height:20px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--panel2);border-radius:10px;cursor:pointer;transition:.3s;border:1px solid var(--border)}
+.toggle-slider::before{content:'';position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:var(--muted);border-radius:50%;transition:.3s}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);background:white}
+
+/* ══ MODALS ══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:2rem;max-width:580px;width:90%;max-height:80vh;overflow-y:auto;animation:popIn .25s ease}
+@keyframes popIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.modal h2{font-family:var(--font-d);font-size:1.3rem;margin-bottom:.5rem}
+.modal p{color:var(--muted);font-size:.88rem;margin-bottom:1.5rem}
+.modal-actions{display:flex;gap:.8rem;margin-top:1.5rem;flex-wrap:wrap}
+.btn-ok{background:var(--accent);color:white;border:none;padding:.7rem 1.5rem;border-radius:8px;font-family:var(--font-b);font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-ok:hover{background:var(--accent2)}
+.btn-cancel{background:none;border:1px solid var(--border);color:var(--muted);padding:.7rem 1.2rem;border-radius:8px;font-family:var(--font-b);font-size:.9rem;cursor:pointer;transition:all .2s}
+.btn-cancel:hover{border-color:var(--muted);color:var(--text)}
+
+/* Export code block */
+.code-block{background:#0a0a0f;border:1px solid var(--border);border-radius:8px;padding:1rem;font-size:.72rem;font-family:monospace;color:#4ade80;max-height:200px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+
+/* Page chooser */
+.page-plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.5rem}
+.page-plan{
+  border:2px solid var(--border);border-radius:10px;padding:1rem;text-align:center;
+  cursor:pointer;transition:all .25s;
+}
+.page-plan:hover,.page-plan.sel{border-color:var(--accent);background:rgba(232,84,10,.08)}
+.page-plan-num{font-family:var(--font-d);font-size:2rem;font-weight:800;color:var(--accent);display:block}
+.page-plan-label{font-size:.75rem;color:var(--muted);display:block;margin-top:.2rem}
+.page-plan-list{font-size:.68rem;color:var(--muted);margin-top:.6rem;text-align:left;line-height:1.7}
+
+/* Mentions légales */
+.mentions-content{font-size:.8rem;color:var(--muted);line-height:1.7;max-height:400px;overflow-y:auto}
+.mentions-content h3{font-size:.88rem;color:var(--text);margin:1rem 0 .3rem;font-family:var(--font-d)}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:2rem;right:2rem;
+  background:var(--panel);border:1px solid var(--green);
+  color:var(--text);padding:.8rem 1.2rem;border-radius:10px;
+  font-size:.85rem;z-index:2000;
+  display:flex;align-items:center;gap:.5rem;
+  transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ══ TOP BAR ══ -->
+<div class="topbar">
+  <a href="index.html" class="tb-logo">MonSite<span>Com</span></a>
+
+  <div class="tb-center" id="page-tabs">
+    <!-- Injected by JS -->
+  </div>
+
+  <div class="tb-right">
+    <div class="device-btns">
+      <button class="dev-btn active" onclick="setDevice('desktop',this)" title="Desktop">🖥</button>
+      <button class="dev-btn" onclick="setDevice('tablet',this)" title="Tablette">⬜</button>
+      <button class="dev-btn" onclick="setDevice('mobile',this)" title="Mobile">📱</button>
+    </div>
+    <button class="btn-preview" onclick="openPreview()">👁 Aperçu</button>
+    <button class="btn-publish" onclick="openPublish()">🚀 Publier</button>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- LEFT SIDEBAR ICONS -->
+  <div class="sidebar-left">
+    <button class="sb-btn" title="Pages" onclick="toggleLeftPanel('pages')" id="sb-pages">📄</button>
+    <button class="sb-btn" title="Blocs" onclick="toggleLeftPanel('blocks')" id="sb-blocks">⊞</button>
+    <button class="sb-btn" title="Photos" onclick="toggleLeftPanel('photos')" id="sb-photos">🖼</button>
+    <button class="sb-btn" title="Textes" onclick="toggleLeftPanel('texts')" id="sb-texts">T</button>
+    <div class="sb-sep"></div>
+    <button class="sb-btn" title="Design global" onclick="toggleLeftPanel('design')" id="sb-design">🎨</button>
+    <button class="sb-btn" title="SEO" onclick="toggleLeftPanel('seo')" id="sb-seo">🔍</button>
+    <button class="sb-btn" title="Mentions légales" onclick="openMentions()" id="sb-legal">⚖️</button>
+    <div class="sb-sep"></div>
+    <button class="sb-btn" title="Annuler" onclick="undo()">↩</button>
+    <button class="sb-btn" title="Rétablir" onclick="redo()">↪</button>
+  </div>
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel" id="left-panel">
+    <div class="lp-inner" id="lp-inner">
+      <!-- Dynamic content -->
+    </div>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas-area" id="canvas-area" onclick="handleCanvasClick(event)">
+    <div class="canvas-wrap" id="canvas-wrap">
+      <div id="site-canvas">
+        <!-- Rendered sections -->
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL (section props) -->
+  <div class="right-panel" id="right-panel">
+    <div class="rp-inner" id="rp-inner">
+      <div class="lp-title">Propriétés</div>
+      <p style="color:var(--muted);font-size:.82rem">Cliquez sur une section pour la modifier</p>
+    </div>
+  </div>
+</div>
+
+<!-- INLINE EDIT BAR -->
+<div class="inline-edit-bar" id="inline-bar">
+  <button class="ieb-btn" onclick="fmt('bold')" title="Gras"><b>B</b></button>
+  <button class="ieb-btn" onclick="fmt('italic')" title="Italique"><i>I</i></button>
+  <button class="ieb-btn" onclick="fmt('underline')" title="Souligner"><u>U</u></button>
+  <div class="ieb-sep"></div>
+  <button class="ieb-btn" onclick="fmt('justifyLeft')" title="Gauche">⬅</button>
+  <button class="ieb-btn" onclick="fmt('justifyCenter')" title="Centre">≡</button>
+  <button class="ieb-btn" onclick="fmt('justifyRight')" title="Droite">➡</button>
+  <div class="ieb-sep"></div>
+  <input class="ieb-size" type="number" value="16" min="8" max="120" onchange="fmt('fontSize',this.value)" title="Taille px"/>
+  <div class="ieb-sep"></div>
+  <input class="ieb-color" type="color" value="#1a1814" onchange="fmt('foreColor',this.value)" title="Couleur texte"/>
+</div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Page Plan -->
+<div class="modal-overlay" id="modal-plan">
+  <div class="modal">
+    <h2>🏗 Choisissez votre formule</h2>
+    <p>Sélectionnez le nombre de pages pour votre site. Vous pourrez toujours en ajouter ou supprimer plus tard.</p>
+    <div class="page-plan-grid">
+      <div class="page-plan sel" data-pages="3" onclick="selectPlan(this,3)">
+        <span class="page-plan-num">3</span>
+        <span class="page-plan-label">Starter</span>
+        <div class="page-plan-list">• Accueil<br>• Services<br>• Contact</div>
+      </div>
+      <div class="page-plan" data-pages="6" onclick="selectPlan(this,6)">
+        <span class="page-plan-num">6</span>
+        <span class="page-plan-label">Pro</span>
+        <div class="page-plan-list">• Accueil<br>• À propos<br>• Services<br>• Réalisations<br>• Témoignages<br>• Contact</div>
+      </div>
+      <div class="page-plan" data-pages="9" onclick="selectPlan(this,9)">
+        <span class="page-plan-num">9</span>
+        <span class="page-plan-label">Expert</span>
+        <div class="page-plan-list">• Accueil<br>• À propos<br>• Équipe<br>• Services<br>• Tarifs<br>• Réalisations<br>• Blog<br>• Témoignages<br>• Contact</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ok" onclick="initWithPlan()">Créer mon site →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mentions légales -->
+<div class="modal-overlay" id="modal-mentions">
+  <div class="modal">
+    <h2>⚖️ Mentions légales & RGPD</h2>
+    <p>Ces pages seront automatiquement générées dans votre site.</p>
+    <div class="mentions-content" id="mentions-content">
+      <h3>Mentions légales</h3>
+      <p>Éditeur du site : <span id="ml-nom">[Nom de l'entreprise]</span><br/>
+      Forme juridique : <span id="ml-forme">[Auto-entrepreneur / SARL / SAS...]</span><br/>
+      Adresse : <span id="ml-adresse">[Adresse complète]</span><br/>
+      Téléphone : <span id="ml-tel">[Téléphone]</span><br/>
+      Email : <span id="ml-email">[Email]</span><br/>
+      SIRET : <span id="ml-siret">[Numéro SIRET]</span><br/>
+      Hébergeur : GitHub Pages (GitHub, Inc. — 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA)</p>
+
+      <h3>Politique de confidentialité & RGPD</h3>
+      <p>Les données collectées via le formulaire de contact (nom, téléphone, email) sont utilisées uniquement pour répondre à vos demandes. Elles ne sont pas transmises à des tiers. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ce droit, contactez-nous à l'adresse email mentionnée ci-dessus.</p>
+
+      <h3>Cookies</h3>
+      <p>Ce site n'utilise pas de cookies de traçage. Seuls des cookies techniques essentiels peuvent être utilisés.</p>
+
+      <h3>Propriété intellectuelle</h3>
+      <p>L'ensemble des contenus (textes, images, logos) présents sur ce site est la propriété exclusive de l'éditeur. Toute reproduction est interdite sans autorisation préalable.</p>
+    </div>
+    <div style="margin-top:1rem">
+      <div class="field"><label>Nom / Raison sociale</label><input type="text" id="ml-input-nom" placeholder="Dupont Plomberie" oninput="updateML('nom',this.value)"/></div>
+      <div class="field"><label>SIRET</label><input type="text" id="ml-input-siret" placeholder="123 456 789 00010" oninput="updateML('siret',this.value)"/></div>
+      <div class="field"><label>Adresse</label><input type="text" id="ml-input-adresse" placeholder="12 rue des Artisans, 75015 Paris" oninput="updateML('adresse',this.value)"/></div>
+      <div class="field"><label>Forme juridique</label>
+        <select oninput="updateML('forme',this.value)">
+          <option>Auto-entrepreneur</option><option>SARL</option><option>SAS</option><option>EURL</option><option>EI</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ok" onclick="closeMentions()">✅ Enregistrer</button>
+      <button class="btn-cancel" onclick="closeMentions()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Publish -->
+<div class="modal-overlay" id="modal-publish">
+  <div class="modal">
+    <h2>🚀 Publier votre site</h2>
+    <p>Téléchargez le fichier ZIP complet de votre site, prêt à déployer sur GitHub Pages puis relier à monsitecom.com.</p>
+    <div style="background:var(--panel2);border-radius:10px;padding:1rem;margin-bottom:1rem">
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
+        <span style="font-size:1.2rem">1️⃣</span>
+        <span style="font-size:.85rem">Téléchargez tous les fichiers HTML ci-dessous</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
+        <span style="font-size:1.2rem">2️⃣</span>
+        <span style="font-size:.85rem">Créez un repo GitHub public et uploadez-les</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
+        <span style="font-size:1.2rem">3️⃣</span>
+        <span style="font-size:.85rem">Settings → Pages → Deploy from main</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <span style="font-size:1.2rem">4️⃣</span>
+        <span style="font-size:.85rem">Hostinger DNS → 4 enregistrements A vers GitHub</span>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ok" onclick="downloadAll()">📥 Télécharger tous les fichiers</button>
+      <button class="btn-cancel" onclick="closePublish()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✅ <span id="toast-msg">Sauvegardé !</span></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+const COLORS = ['#0d6e3f','#1d4ed8','#dc2626','#7c3aed','#0891b2','#d97706','#1a1a1a','#e8540a'];
+
+let state = {
+  plan: 3,
+  accentColor: '#0d6e3f',
+  fontFamily: 'Syne',
+  companyName: 'Mon Entreprise',
+  metier: 'plombier',
+  ville: 'Paris',
+  tel: '06 00 00 00 00',
+  email: 'contact@monsite.fr',
+  pages: [],
+  currentPage: 0,
+  legalInfo: { nom:'', siret:'', adresse:'', forme:'Auto-entrepreneur' },
+  history: [],
+  historyIndex: -1,
+};
+
+const PAGE_TEMPLATES = {
+  'Accueil': buildHero,
+  'À propos': buildAbout,
+  'Services': buildServices,
+  'Réalisations': buildRealisations,
+  'Témoignages': buildTemoignages,
+  'Contact': buildContact,
+  'Équipe': buildEquipe,
+  'Tarifs': buildTarifs,
+  'Blog': buildBlog,
+};
+
+const PLAN_PAGES = {
+  3: ['Accueil','Services','Contact'],
+  6: ['Accueil','À propos','Services','Réalisations','Témoignages','Contact'],
+  9: ['Accueil','À propos','Équipe','Services','Tarifs','Réalisations','Blog','Témoignages','Contact'],
+};
+
+let openPanel = null;
+let selectedSection = null;
+let uploadedPhotos = {};
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+window.onload = () => {
+  document.getElementById('modal-plan').classList.add('open');
+};
+
+function selectPlan(el, n) {
+  document.querySelectorAll('.page-plan').forEach(p => p.classList.remove('sel'));
+  el.classList.add('sel');
+  state.plan = n;
+}
+
+function initWithPlan() {
+  document.getElementById('modal-plan').classList.remove('open');
+  const pageNames = PLAN_PAGES[state.plan];
+  state.pages = pageNames.map((name, i) => ({
+    id: i, name, slug: slugify(name), sections: []
+  }));
+  // Add mentions légales page always
+  state.pages.push({ id: 999, name: 'Mentions légales', slug: 'mentions-legales', sections: [] });
+  renderPageTabs();
+  loadPage(0);
+}
+
+function slugify(str) {
+  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-');
+}
+
+// ══════════════════════════════════════════════════════════
+// PAGE TABS
+// ══════════════════════════════════════════════════════════
+function renderPageTabs() {
+  const el = document.getElementById('page-tabs');
+  el.innerHTML = state.pages.map((p, i) => `
+    <button class="tb-page-btn ${i === state.currentPage ? 'active' : ''}" onclick="loadPage(${i})">${p.name}</button>
+  `).join('');
+}
+
+function loadPage(idx) {
+  state.currentPage = idx;
+  renderPageTabs();
+  const page = state.pages[idx];
+  if (!page.sections.length) {
+    // Auto-generate page content
+    page.sections = generatePageSections(page.name);
+  }
+  renderCanvas();
+  deselectSection();
+}
+
+function generatePageSections(pageName) {
+  const fn = PAGE_TEMPLATES[pageName];
+  if (fn) return fn();
+  if (pageName === 'Mentions légales') return buildMentionsLegales();
+  return [{ type: 'blank', id: genId() }];
+}
+
+// ══════════════════════════════════════════════════════════
+// SECTION BUILDERS
+// ══════════════════════════════════════════════════════════
+function genId() { return 'sec_' + Math.random().toString(36).slice(2,9); }
+
+function buildHero() {
+  return [
+    { id: genId(), type: 'nav', bg: state.accentColor, logo: state.companyName },
+    { id: genId(), type: 'hero', bg: '#1a3a2a', color: '#fff', title: state.companyName + ' — ' + state.ville, subtitle: 'Artisan professionnel à votre service. Devis gratuit sous 2h.', cta: 'Demander un devis', ctaColor: state.accentColor, showForm: true },
+    { id: genId(), type: 'stats', bg: '#fff', color: '#1a1814', items: [{num:'15+',label:'Ans d\'exp.'},{num:'500+',label:'Chantiers'},{num:'4.9',label:'Note Google'},{num:'100%',label:'Satisfaits'}] },
+  ];
+}
+
+function buildAbout() {
+  return [
+    { id: genId(), type: 'text-image', bg: '#fff', color: '#1a1814', title: 'Qui sommes-nous ?', text: 'Entreprise artisanale fondée il y a plus de 15 ans, nous mettons notre expertise au service de vos projets. Notre équipe qualifiée intervient rapidement et proprement sur chaque chantier.', image: null, imageLeft: false },
+    { id: genId(), type: 'badges', bg: '#f5f2ec', badges: ['Artisan certifié RGE','Garantie décennale','Devis gratuit','Paiement en plusieurs fois'] },
+  ];
+}
+
+function buildServices() {
+  const icons = {plombier:['🔧','⚡','🚿','🔩','💧','🛁'],electricien:['⚡','💡','🔌','🛡','🏠','📊'],macon:['🏗','🧱','🪨','⛏','🏠','📐'],peintre:['🎨','🖌','🏠','✨','🪣','🎭']};
+  const svc = icons[state.metier] || icons.plombier;
+  return [
+    { id: genId(), type: 'section-title', bg: '#fff', title: 'Nos Services', subtitle: 'Tout ce qu\'il vous faut, réalisé par des professionnels à ' + state.ville },
+    { id: genId(), type: 'cards', bg: '#fff', color: '#1a1814', cards: [
+      {icon: svc[0], title:'Service 1', desc:'Description du premier service proposé. Intervention rapide et soignée.'},
+      {icon: svc[1], title:'Service 2', desc:'Description du deuxième service. Matériaux de qualité garantis.'},
+      {icon: svc[2], title:'Service 3', desc:'Troisième prestation. Devis gratuit et sans engagement.'},
+      {icon: svc[3], title:'Service 4', desc:'Quatrième service disponible dans votre région.'},
+    ], cols: 4 },
+  ];
+}
+
+function buildRealisations() {
+  return [
+    { id: genId(), type: 'section-title', bg: '#f5f2ec', title: 'Nos Réalisations', subtitle: 'Quelques exemples de nos derniers chantiers' },
+    { id: genId(), type: 'gallery', bg: '#f5f2ec', images: [null,null,null,null,null,null] },
+  ];
+}
+
+function buildTemoignages() {
+  return [
+    { id: genId(), type: 'section-title', bg: '#fff', title: 'Témoignages', subtitle: 'Ce que disent nos clients' },
+    { id: genId(), type: 'reviews', bg: '#fff', reviews: [
+      {name:'Marie D.', stars:5, text:'Intervention rapide et très professionnelle. Je recommande vivement !'},
+      {name:'Jean-Paul M.', stars:5, text:'Travail soigné, prix correct. L\'artisan est ponctuel et efficace.'},
+      {name:'Sophie L.', stars:5, text:'Excellent service, délai respecté, résultat impeccable. Merci !'},
+    ]},
+  ];
+}
+
+function buildContact() {
+  return [
+    { id: genId(), type: 'contact', bg: state.accentColor, color:'#fff', title:'Contactez-nous', subtitle:'Un projet ? Répondons-nous sous 2h.', tel: state.tel, email: state.email, showMap: true },
+  ];
+}
+
+function buildEquipe() {
+  return [
+    { id: genId(), type: 'section-title', bg: '#fff', title: 'Notre Équipe', subtitle: 'Des professionnels passionnés à votre service' },
+    { id: genId(), type: 'team', bg: '#fff', members: [
+      {name:'Jean Dupont', role:'Fondateur & Artisan', emoji:'👷'},
+      {name:'Marie Martin', role:'Responsable chantiers', emoji:'👩‍🔧'},
+      {name:'Paul Bernard', role:'Technicien senior', emoji:'🧑‍🔧'},
+    ]},
+  ];
+}
+
+function buildTarifs() {
+  return [
+    { id: genId(), type: 'section-title', bg: '#fff', title: 'Nos Tarifs', subtitle: 'Des prix transparents, sans mauvaise surprise' },
+    { id: genId(), type: 'pricing', bg: '#fff', plans: [
+      {name:'Essentiel', price:'À partir de 90€', features:['Diagnostic gratuit','Intervention sous 48h','Garantie 1 an'], highlight: false},
+      {name:'Premium', price:'À partir de 150€', features:['Diagnostic gratuit','Intervention sous 24h','Garantie 2 ans','Suivi personnalisé'], highlight: true},
+      {name:'Urgence', price:'À partir de 200€', features:['Intervention < 2h','7j/7 24h/24','Garantie 1 an'], highlight: false},
+    ]},
+  ];
+}
+
+function buildBlog() {
+  return [
+    { id: genId(), type: 'section-title', bg: '#f5f2ec', title: 'Blog & Conseils', subtitle: 'Nos articles pour vous aider dans vos projets' },
+    { id: genId(), type: 'blog', bg: '#f5f2ec', posts: [
+      {emoji:'📝', title:'5 signes que votre installation nécessite une révision', date:'15 Jan 2025', excerpt:'Découvrez les signaux qui indiquent qu\'il est temps d\'appeler un professionnel...'},
+      {emoji:'💡', title:'Comment choisir le bon artisan pour vos travaux ?', date:'02 Feb 2025', excerpt:'Nos conseils pratiques pour trouver un artisan de confiance dans votre région...'},
+      {emoji:'🏠', title:'Entretien annuel : pourquoi c\'est indispensable', date:'10 Mar 2025', excerpt:'L\'entretien préventif vous évite des pannes coûteuses. Voici nos recommandations...'},
+    ]},
+  ];
+}
+
+function buildMentionsLegales() {
+  return [
+    { id: genId(), type: 'legal', bg: '#fff', color: '#1a1814' },
+  ];
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER CANVAS
+// ══════════════════════════════════════════════════════════
+function renderCanvas() {
+  const page = state.pages[state.currentPage];
+  const canvas = document.getElementById('site-canvas');
+  canvas.innerHTML = page.sections.map(sec => renderSection(sec)).join('');
+  // Make text elements editable
+  canvas.querySelectorAll('[data-editable]').forEach(el => {
+    el.contentEditable = true;
+    el.style.outline = 'none';
+    el.style.cursor = 'text';
+    el.addEventListener('focus', () => showInlineBar());
+    el.addEventListener('blur', () => { setTimeout(hideInlineBar, 200); saveSection(); });
+    el.addEventListener('input', debounce(saveSection, 500));
+  });
+}
+
+function renderSection(sec) {
+  const wrap = (inner, extraClass='') =>
+    `<div class="section-wrap ${extraClass}" data-id="${sec.id}" onclick="selectSection('${sec.id}',event)">
+      <div class="section-overlay"><div class="section-actions">
+        <button class="sa-btn" onclick="moveSection('${sec.id}',-1,event)" title="Monter">↑</button>
+        <button class="sa-btn" onclick="moveSection('${sec.id}',1,event)" title="Descendre">↓</button>
+        <button class="sa-btn" onclick="duplicateSection('${sec.id}',event)" title="Dupliquer">⧉</button>
+        <button class="sa-btn" onclick="deleteSection('${sec.id}',event)" title="Supprimer">✕</button>
+      </div></div>
+      ${inner}
+    </div>`;
+
+  const c = state.accentColor;
+  const fontFam = `'${state.fontFamily}', sans-serif`;
+
+  switch(sec.type) {
+    case 'nav': return wrap(`
+      <nav style="background:${sec.bg||c};padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between">
+        <span data-editable data-field="logo" style="font-family:${fontFam};font-weight:800;font-size:1.3rem;color:white;cursor:text">${sec.logo||state.companyName}</span>
+        <div style="display:flex;gap:1.5rem">
+          ${state.pages.filter(p=>p.name!=='Mentions légales').slice(0,5).map(p=>`<span style="color:rgba(255,255,255,.85);font-size:.9rem">${p.name}</span>`).join('')}
+        </div>
+        <button style="background:white;color:${c};border:none;padding:.5rem 1.1rem;border-radius:6px;font-weight:700;font-size:.85rem;cursor:pointer">Devis gratuit</button>
+      </nav>`);
+
+    case 'hero': return wrap(`
+      <section style="background:${sec.bg||'#1a3a2a'};color:${sec.color||'#fff'};padding:5rem 4rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;min-height:480px">
+        <div>
+          <div style="display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;padding:.35rem .9rem;border-radius:999px;margin-bottom:1.2rem">${state.metier} — ${state.ville}</div>
+          <h1 data-editable style="font-family:${fontFam};font-size:2.8rem;font-weight:800;line-height:1.05;margin-bottom:1rem;cursor:text">${sec.title||state.companyName}</h1>
+          <p data-editable style="opacity:.75;font-size:1rem;margin-bottom:2rem;cursor:text">${sec.subtitle||'Artisan professionnel. Devis gratuit.'}</p>
+          <a style="background:${sec.ctaColor||c};color:white;padding:.9rem 2rem;border-radius:8px;text-decoration:none;font-weight:700;display:inline-block">${sec.cta||'Demander un devis'}</a>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:2rem">
+          <div style="font-weight:700;font-size:1rem;margin-bottom:1.2rem;color:rgba(255,255,255,.9)">📋 Demande de devis gratuit</div>
+          ${['Votre nom *','Téléphone *','Email','Décrivez votre besoin...'].map((ph,i) =>
+            i<3 ? `<input placeholder="${ph}" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:white;padding:.6rem .9rem;border-radius:6px;margin-bottom:.6rem;font-size:.85rem;outline:none"/>`
+            : `<textarea placeholder="${ph}" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:white;padding:.6rem .9rem;border-radius:6px;margin-bottom:.8rem;font-size:.85rem;outline:none;min-height:70px"></textarea>`
+          ).join('')}
+          <button style="width:100%;background:${c};color:white;border:none;padding:.8rem;border-radius:8px;font-weight:700;cursor:pointer">Envoyer →</button>
+        </div>
+      </section>`);
+
+    case 'stats': return wrap(`
+      <section style="background:${sec.bg||'#fff'};padding:2.5rem 4rem;display:grid;grid-template-columns:repeat(${sec.items?.length||4},1fr);gap:1rem;border-bottom:1px solid #e5e7eb">
+        ${(sec.items||[]).map(it=>`
+          <div style="text-align:center">
+            <div data-editable style="font-family:${fontFam};font-size:2.2rem;font-weight:800;color:${c};cursor:text">${it.num}</div>
+            <div data-editable style="font-size:.82rem;color:#666;cursor:text">${it.label}</div>
+          </div>`).join('')}
+      </section>`);
+
+    case 'section-title': return wrap(`
+      <section style="background:${sec.bg||'#fff'};padding:3.5rem 4rem 1.5rem;text-align:center">
+        <div style="width:40px;height:3px;background:${c};border-radius:2px;margin:0 auto .8rem"></div>
+        <h2 data-editable style="font-family:${fontFam};font-size:2.2rem;font-weight:800;letter-spacing:-.02em;cursor:text">${sec.title||'Titre de section'}</h2>
+        <p data-editable style="color:#666;margin-top:.6rem;font-size:1rem;max-width:500px;margin-left:auto;margin-right:auto;cursor:text">${sec.subtitle||'Description de la section'}</p>
+      </section>`);
+
+    case 'text-image': return wrap(`
+      <section style="background:${sec.bg||'#fff'};padding:4rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center">
+        ${sec.imageLeft ? imageBox(sec, c) + textBox(sec, fontFam, c) : textBox(sec, fontFam, c) + imageBox(sec, c)}
+      </section>`);
+
+    case 'cards': return wrap(`
+      <section style="background:${sec.bg||'#fff'};padding:1.5rem 4rem 4rem">
+        <div style="display:grid;grid-template-columns:repeat(${sec.cols||3},1fr);gap:1.2rem">
+          ${(sec.cards||[]).map(card=>`
+            <div style="border:1px solid #e5e7eb;border-radius:12px;padding:1.8rem;transition:all .25s;background:${sec.bg||'#fff'}">
+              <div style="font-size:2rem;margin-bottom:.8rem">${card.icon}</div>
+              <h3 data-editable style="font-family:${fontFam};font-size:1.05rem;font-weight:700;margin-bottom:.5rem;cursor:text">${card.title}</h3>
+              <p data-editable style="font-size:.85rem;color:#666;line-height:1.6;cursor:text">${card.desc}</p>
+            </div>`).join('')}
+        </div>
+      </section>`);
+
+    case 'badges': return wrap(`
+      <section style="background:${sec.bg||'#f5f2ec'};padding:2rem 4rem;display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center">
+        ${(sec.badges||[]).map(b=>`<span style="background:white;border:1px solid #e5e7eb;padding:.5rem 1.2rem;border-radius:999px;font-size:.85rem;font-weight:500">✓ ${b}</span>`).join('')}
+      </section>`);
+
+    case 'gallery': return wrap(`
+      <section style="background:${sec.bg||'#f5f2ec'};padding:1.5rem 4rem 4rem">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem">
+          ${(sec.images||[null,null,null,null,null,null]).map((img,i)=>`
+            <div data-img-slot="${sec.id}-${i}" onclick="pickPhoto('${sec.id}',${i})"
+              style="aspect-ratio:4/3;background:#e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;border:2px dashed #ccc;transition:border-color .2s">
+              ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover"/>` : `<div style="text-align:center;color:#999"><div style="font-size:2rem">📷</div><div style="font-size:.75rem;margin-top:.3rem">Ajouter photo</div></div>`}
+            </div>`).join('')}
+        </div>
+      </section>`);
+
+    case 'reviews': return wrap(`
+      <section style="background:${sec.bg||'#fff'};padding:1.5rem 4rem 4rem">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem">
+          ${(sec.reviews||[]).map(r=>`
+            <div style="background:#f9f8f5;border:1px solid #e5e7eb;border-radius:12px;padding:1.8rem">
+              <div style="color:#f59e0b;margin-bottom:.8rem">${'★'.repeat(r.stars)}</div>
+              <p data-editable style="font-size:.9rem;line-height:1.6;margin-bottom:1rem;cursor:text">"${r.text}"</p>
+              <div data-editable style="font-weight:700;font-size:.85rem;cursor:text">— ${r.name}</div>
+            </div>`).join('')}
+        </div>
+      </section>`);
+
+    case 'contact': return wrap(`
+      <section style="background:${sec.bg||c};color:${sec.color||'#fff'};padding:5rem 4rem;text-align:center">
+        <h2 data-editable style="font-family:${fontFam};font-size:2.5rem;font-weight:800;margin-bottom:.8rem;cursor:text">${sec.title||'Contactez-nous'}</h2>
+        <p data-editable style="opacity:.85;margin-bottom:2.5rem;cursor:text">${sec.subtitle||'Un projet ? On vous répond sous 2h.'}</p>
+        <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
+          <a href="tel:${sec.tel||state.tel}" style="background:white;color:${c};padding:1rem 2rem;border-radius:8px;text-decoration:none;font-weight:700;display:inline-flex;align-items:center;gap:.5rem">📞 ${sec.tel||state.tel}</a>
+          <a href="mailto:${sec.email||state.email}" style="border:2px solid rgba(255,255,255,.5);color:white;padding:.95rem 1.8rem;border-radius:8px;text-decoration:none;font-weight:600">✉️ ${sec.email||state.email}</a>
+        </div>
+        <div style="margin-top:2.5rem;background:rgba(255,255,255,.1);border-radius:12px;padding:1.5rem;max-width:500px;margin-left:auto;margin-right:auto">
+          <div style="font-size:.85rem;opacity:.8">📍 ${state.ville} &nbsp;|&nbsp; 🕐 Lun-Ven 8h-19h &nbsp;|&nbsp; ⭐ 4.9/5</div>
+        </div>
+      </section>`);
+
+    case 'team': return wrap(`
+      <section style="background:${sec.bg||'#fff'};padding:1.5rem 4rem 4rem">
+        <div style="display:grid;grid-template-columns:repeat(${Math.min(sec.members?.length||3,4)},1fr);gap:1.5rem">
+          ${(sec.members||[]).map(m=>`
+            <div style="text-align:center;padding:2rem;border:1px solid #e5e7eb;border-radius:12px">
+              <div style="width:80px;height:80px;border-radius:50%;background:#f5f2ec;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 1rem">${m.emoji||'👤'}</div>
+              <div data-editable style="font-family:${fontFam};font-weight:700;font-size:1rem;cursor:text">${m.name}</div>
+              <div data-editable style="font-size:.82rem;color:#777;margin-top:.3rem;cursor:text">${m.role}</div>
+            </div>`).join('')}
+        </div>
+      </section>`);
+
+    case 'pricing': return wrap(`
+      <section style="background:${sec.bg||'#fff'};padding:1.5rem 4rem 4rem">
+        <div style="display:grid;grid-template-columns:repeat(${sec.plans?.length||3},1fr);gap:1.2rem">
+          ${(sec.plans||[]).map(p=>`
+            <div style="border:${p.highlight?'2px solid '+c:'1px solid #e5e7eb'};border-radius:12px;padding:2rem;${p.highlight?'box-shadow:0 8px 32px rgba(0,0,0,.1);transform:scale(1.03)':''}">
+              ${p.highlight?`<div style="background:${c};color:white;font-size:.72rem;font-weight:700;padding:.25rem .6rem;border-radius:999px;display:inline-block;margin-bottom:.8rem">⭐ Populaire</div>`:''}
+              <div data-editable style="font-family:${fontFam};font-size:1.1rem;font-weight:800;cursor:text">${p.name}</div>
+              <div data-editable style="font-size:1.6rem;font-weight:800;color:${c};margin:.5rem 0 1rem;cursor:text">${p.price}</div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem">
+                ${p.features.map(f=>`<li style="font-size:.85rem;display:flex;align-items:center;gap:.4rem"><span style="color:${c}">✓</span>${f}</li>`).join('')}
+              </ul>
+              <button style="width:100%;background:${p.highlight?c:'transparent'};color:${p.highlight?'white':c};border:2px solid ${c};padding:.7rem;border-radius:8px;font-weight:700;cursor:pointer">Choisir</button>
+            </div>`).join('')}
+        </div>
+      </section>`);
+
+    case 'blog': return wrap(`
+      <section style="background:${sec.bg||'#f5f2ec'};padding:1.5rem 4rem 4rem">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem">
+          ${(sec.posts||[]).map(p=>`
+            <div style="background:white;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
+              <div style="background:#e5e7eb;height:140px;display:flex;align-items:center;justify-content:center;font-size:3rem">${p.emoji}</div>
+              <div style="padding:1.3rem">
+                <div style="font-size:.72rem;color:#999;margin-bottom:.5rem">${p.date}</div>
+                <h3 data-editable style="font-family:${fontFam};font-size:.95rem;font-weight:700;margin-bottom:.5rem;cursor:text">${p.title}</h3>
+                <p data-editable style="font-size:.82rem;color:#666;line-height:1.5;cursor:text">${p.excerpt}</p>
+                <a href="#" style="color:${c};font-size:.82rem;font-weight:600;display:inline-block;margin-top:.8rem">Lire la suite →</a>
+              </div>
+            </div>`).join('')}
+        </div>
+      </section>`);
+
+    case 'legal': return wrap(`
+      <section style="background:#fff;padding:5rem 4rem;max-width:800px;margin:0 auto">
+        <h1 style="font-family:${fontFam};font-size:2rem;font-weight:800;margin-bottom:2rem">Mentions légales</h1>
+        <h2 style="font-size:1.1rem;font-weight:700;margin:1.5rem 0 .5rem;font-family:${fontFam}">Éditeur du site</h2>
+        <p style="color:#555;line-height:1.8">Nom : ${state.legalInfo.nom||state.companyName}<br/>Forme juridique : ${state.legalInfo.forme}<br/>SIRET : ${state.legalInfo.siret||'À compléter'}<br/>Adresse : ${state.legalInfo.adresse||state.ville}<br/>Téléphone : ${state.tel}<br/>Email : ${state.email}</p>
+        <h2 style="font-size:1.1rem;font-weight:700;margin:1.5rem 0 .5rem;font-family:${fontFam}">Hébergeur</h2>
+        <p style="color:#555;line-height:1.8">GitHub Pages — GitHub, Inc. 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA</p>
+        <h2 style="font-size:1.1rem;font-weight:700;margin:1.5rem 0 .5rem;font-family:${fontFam}">Politique de confidentialité & RGPD</h2>
+        <p style="color:#555;line-height:1.8">Les données collectées (nom, téléphone, email) via le formulaire de contact sont utilisées uniquement pour répondre à vos demandes. Conformément au RGPD, vous disposez d'un droit d'accès, rectification et suppression. Contact : ${state.email}</p>
+        <h2 style="font-size:1.1rem;font-weight:700;margin:1.5rem 0 .5rem;font-family:${fontFam}">Cookies</h2>
+        <p style="color:#555;line-height:1.8">Ce site n'utilise pas de cookies de traçage. Seuls les cookies techniques essentiels peuvent être utilisés.</p>
+        <h2 style="font-size:1.1rem;font-weight:700;margin:1.5rem 0 .5rem;font-family:${fontFam}">Propriété intellectuelle</h2>
+        <p style="color:#555;line-height:1.8">Tous les contenus de ce site sont la propriété de ${state.legalInfo.nom||state.companyName}. Toute reproduction est interdite sans autorisation.</p>
+      </section>`);
+
+    default: return wrap(`<div style="padding:3rem;text-align:center;color:#ccc;background:#f9f9f9;border:2px dashed #ddd">Section personnalisée</div>`);
+  }
+}
+
+function textBox(sec, fontFam, c) {
+  return `<div>
+    <h2 data-editable style="font-family:${fontFam};font-size:2rem;font-weight:800;margin-bottom:1rem;cursor:text">${sec.title||'Notre histoire'}</h2>
+    <p data-editable style="color:#555;line-height:1.8;cursor:text">${sec.text||'Texte à personnaliser...'}</p>
+    <div style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.5rem">
+      <a href="#" style="background:${c};color:white;padding:.7rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.9rem">En savoir plus</a>
+    </div>
+  </div>`;
+}
+
+function imageBox(sec, c) {
+  return `<div data-img-main="${sec.id}" onclick="pickPhotoMain('${sec.id}')"
+    style="aspect-ratio:4/3;background:#e5e7eb;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;border:2px dashed #ccc">
+    ${sec.image ? `<img src="${sec.image}" style="width:100%;height:100%;object-fit:cover"/>` : `<div style="text-align:center;color:#999"><div style="font-size:3rem">📷</div><div style="font-size:.85rem;margin-top:.5rem">Cliquez pour ajouter<br/>une photo</div></div>`}
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// SECTION SELECTION & EDITING
+// ══════════════════════════════════════════════════════════
+function selectSection(id, e) {
+  if (e) e.stopPropagation();
+  selectedSection = id;
+  document.querySelectorAll('.section-wrap').forEach(el => el.classList.toggle('selected', el.dataset.id === id));
+  const sec = getCurrentPage().sections.find(s => s.id === id);
+  if (sec) renderRightPanel(sec);
+}
+
+function deselectSection() {
+  selectedSection = null;
+  document.querySelectorAll('.section-wrap').forEach(el => el.classList.remove('selected'));
+  document.getElementById('rp-inner').innerHTML = `<div class="lp-title">Propriétés</div><p style="color:var(--muted);font-size:.82rem">Cliquez sur une section pour la modifier</p>`;
+  document.getElementById('right-panel').classList.remove('open');
+}
+
+function handleCanvasClick(e) {
+  if (e.target === document.getElementById('canvas-area') || e.target === document.getElementById('canvas-wrap')) {
+    deselectSection();
+  }
+}
+
+function renderRightPanel(sec) {
+  const rp = document.getElementById('right-panel');
+  rp.classList.add('open');
+  const ri = document.getElementById('rp-inner');
+
+  let html = `<div class="lp-title">Section : ${sec.type}</div>`;
+
+  // Background color
+  html += `<div class="prop-section">
+    <div class="prop-section-title">Arrière-plan</div>
+    <input type="color" value="${sec.bg||'#ffffff'}" onchange="updateSecProp('${sec.id}','bg',this.value)" style="width:100%;height:36px;border:none;border-radius:8px;cursor:pointer"/>
+  </div>`;
+
+  // Text color
+  if (sec.color !== undefined) {
+    html += `<div class="prop-section">
+      <div class="prop-section-title">Couleur du texte</div>
+      <input type="color" value="${sec.color||'#fff'}" onchange="updateSecProp('${sec.id}','color',this.value)" style="width:100%;height:36px;border:none;border-radius:8px;cursor:pointer"/>
+    </div>`;
+  }
+
+  // CTA color for hero
+  if (sec.type === 'hero') {
+    html += `<div class="prop-section">
+      <div class="prop-section-title">Couleur du bouton</div>
+      <input type="color" value="${sec.ctaColor||state.accentColor}" onchange="updateSecProp('${sec.id}','ctaColor',this.value)" style="width:100%;height:36px;border:none;border-radius:8px;cursor:pointer"/>
+    </div>`;
+    html += `<div class="prop-section">
+      <div class="prop-section-title">Texte du bouton</div>
+      <input type="text" value="${sec.cta||'Demander un devis'}" oninput="updateSecProp('${sec.id}','cta',this.value)" style="width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:.6rem .8rem;border-radius:6px;font-family:var(--font-b);font-size:.85rem;outline:none"/>
+    </div>`;
+  }
+
+  // Cards columns
+  if (sec.type === 'cards') {
+    html += `<div class="prop-section">
+      <div class="prop-section-title">Nombre de colonnes</div>
+      <select onchange="updateSecProp('${sec.id}','cols',parseInt(this.value))" style="width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:.6rem .8rem;border-radius:6px;font-family:var(--font-b);font-size:.85rem;outline:none">
+        <option value="2" ${sec.cols===2?'selected':''}>2 colonnes</option>
+        <option value="3" ${sec.cols===3||!sec.cols?'selected':''}>3 colonnes</option>
+        <option value="4" ${sec.cols===4?'selected':''}>4 colonnes</option>
+      </select>
+    </div>`;
+    html += `<div class="prop-section">
+      <div class="prop-section-title">Ajouter une carte</div>
+      <button onclick="addCard('${sec.id}')" style="width:100%;background:none;border:1px dashed var(--border);color:var(--muted);padding:.6rem;border-radius:6px;cursor:pointer;font-family:var(--font-b)">+ Ajouter une carte</button>
+    </div>`;
+  }
+
+  // Image flip for text-image
+  if (sec.type === 'text-image') {
+    html += `<div class="prop-section">
+      <div class="toggle-row"><span>Image à gauche</span>
+        <label class="toggle"><input type="checkbox" ${sec.imageLeft?'checked':''} onchange="updateSecProp('${sec.id}','imageLeft',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+    </div>`;
+  }
+
+  // Delete section
+  html += `<div class="prop-section" style="margin-top:2rem">
+    <button onclick="deleteSection('${sec.id}',null)" style="width:100%;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;padding:.7rem;border-radius:8px;cursor:pointer;font-family:var(--font-b);font-size:.85rem">🗑 Supprimer la section</button>
+  </div>`;
+
+  ri.innerHTML = html;
+}
+
+function updateSecProp(id, prop, val) {
+  const page = getCurrentPage();
+  const sec = page.sections.find(s => s.id === id);
+  if (sec) { sec[prop] = val; renderCanvas(); selectSection(id, null); showToast('Mis à jour !'); }
+}
+
+function addCard(secId) {
+  const page = getCurrentPage();
+  const sec = page.sections.find(s => s.id === secId);
+  if (sec && sec.cards) {
+    sec.cards.push({icon:'⭐', title:'Nouveau service', desc:'Description de ce service...'});
+    renderCanvas(); selectSection(secId, null);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// SECTION ACTIONS
+// ══════════════════════════════════════════════════════════
+function moveSection(id, dir, e) {
+  if (e) { e.stopPropagation(); }
+  const page = getCurrentPage();
+  const idx = page.sections.findIndex(s => s.id === id);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= page.sections.length) return;
+  [page.sections[idx], page.sections[newIdx]] = [page.sections[newIdx], page.sections[idx]];
+  renderCanvas();
+  setTimeout(() => selectSection(id, null), 50);
+}
+
+function duplicateSection(id, e) {
+  if (e) e.stopPropagation();
+  const page = getCurrentPage();
+  const idx = page.sections.findIndex(s => s.id === id);
+  const clone = JSON.parse(JSON.stringify(page.sections[idx]));
+  clone.id = genId();
+  page.sections.splice(idx+1, 0, clone);
+  renderCanvas(); showToast('Section dupliquée !');
+}
+
+function deleteSection(id, e) {
+  if (e) e.stopPropagation();
+  const page = getCurrentPage();
+  page.sections = page.sections.filter(s => s.id !== id);
+  renderCanvas(); deselectSection(); showToast('Section supprimée');
+}
+
+function saveSection() {
+  // Auto-save text edits from contenteditable
+  // (already live via data-editable binding)
+}
+
+// ══════════════════════════════════════════════════════════
+// LEFT PANELS
+// ══════════════════════════════════════════════════════════
+function toggleLeftPanel(type) {
+  const panel = document.getElementById('left-panel');
+  const inner = document.getElementById('lp-inner');
+  const btn = document.getElementById('sb-' + type);
+
+  if (openPanel === type) {
+    panel.classList.remove('open');
+    document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+    openPanel = null;
+    return;
+  }
+
+  openPanel = type;
+  panel.classList.add('open');
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  switch(type) {
+    case 'pages':   renderPagesPanel(inner); break;
+    case 'blocks':  renderBlocksPanel(inner); break;
+    case 'photos':  renderPhotosPanel(inner); break;
+    case 'texts':   renderTextsPanel(inner); break;
+    case 'design':  renderDesignPanel(inner); break;
+    case 'seo':     renderSeoPanel(inner); break;
+  }
+}
+
+function renderPagesPanel(el) {
+  el.innerHTML = `<div class="lp-title">Pages du site</div>
+    <div id="pages-list">
+      ${state.pages.map((p,i) => `
+        <div class="page-item ${i===state.currentPage?'active':''}" onclick="loadPage(${i})">
+          <div class="page-item-left"><span>📄</span><span>${p.name}</span></div>
+          ${p.name !== 'Accueil' && p.name !== 'Mentions légales' ? `<button class="page-item-del" onclick="deletePage(${i},event)">✕</button>` : ''}
+        </div>`).join('')}
+    </div>
+    <button class="btn-add-page" onclick="openAddPage()">+ Ajouter une page</button>
+    <div id="add-page-form" style="display:none;margin-top:.8rem">
+      <div class="field"><label>Nom de la page</label><input type="text" id="new-page-name" placeholder="Ex: FAQ, Galerie..." /></div>
+      <button class="btn-ok" style="width:100%;font-size:.85rem;padding:.6rem" onclick="addPage()">Créer la page</button>
+    </div>`;
+}
+
+function openAddPage() {
+  document.getElementById('add-page-form').style.display = 'block';
+  document.getElementById('new-page-name').focus();
+}
+
+function addPage() {
+  const name = document.getElementById('new-page-name').value.trim();
+  if (!name) return;
+  state.pages.splice(state.pages.length - 1, 0, { id: genId(), name, slug: slugify(name), sections: [] });
+  renderPageTabs();
+  renderPagesPanel(document.getElementById('lp-inner'));
+  showToast('Page "' + name + '" ajoutée !');
+}
+
+function deletePage(idx, e) {
+  e.stopPropagation();
+  if (state.pages[idx].name === 'Accueil' || state.pages[idx].name === 'Mentions légales') return;
+  state.pages.splice(idx, 1);
+  if (state.currentPage >= state.pages.length) state.currentPage = 0;
+  renderPageTabs();
+  loadPage(state.currentPage);
+  renderPagesPanel(document.getElementById('lp-inner'));
+  showToast('Page supprimée');
+}
+
+function renderBlocksPanel(el) {
+  const blocks = [
+    {type:'nav', icon:'🔝', label:'Navigation'},
+    {type:'hero', icon:'🦸', label:'Hero'},
+    {type:'stats', icon:'📊', label:'Statistiques'},
+    {type:'section-title', icon:'📌', label:'Titre section'},
+    {type:'text-image', icon:'📝', label:'Texte + Image'},
+    {type:'cards', icon:'🃏', label:'Cartes'},
+    {type:'gallery', icon:'🖼', label:'Galerie'},
+    {type:'reviews', icon:'⭐', label:'Avis'},
+    {type:'contact', icon:'📞', label:'Contact'},
+    {type:'team', icon:'👥', label:'Équipe'},
+    {type:'pricing', icon:'💰', label:'Tarifs'},
+    {type:'blog', icon:'📰', label:'Blog'},
+    {type:'badges', icon:'🏅', label:'Badges'},
+  ];
+  el.innerHTML = `<div class="lp-title">Ajouter un bloc</div>
+    <p style="color:var(--muted);font-size:.78rem;margin-bottom:1rem">Cliquez pour ajouter en bas de la page</p>
+    <div class="block-list">
+      ${blocks.map(b => `
+        <div class="block-thumb" onclick="addBlock('${b.type}')">
+          <span class="block-thumb-icon">${b.icon}</span>
+          <span>${b.label}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+function addBlock(type) {
+  const page = getCurrentPage();
+  const newSec = { id: genId(), type, bg:'#ffffff' };
+  // Init defaults by type
+  if (type === 'cards') newSec.cards = [{icon:'⭐',title:'Service',desc:'Description...'},{icon:'🔧',title:'Service 2',desc:'Description...'}], newSec.cols = 3;
+  if (type === 'reviews') newSec.reviews = [{name:'Client',stars:5,text:'Excellent service !'}];
+  if (type === 'stats') newSec.items = [{num:'10+',label:'Années'},{num:'200+',label:'Projets'},{num:'5★',label:'Note'}];
+  if (type === 'badges') newSec.badges = ['Certifié','Garanti','Professionnel'];
+  if (type === 'gallery') newSec.images = [null,null,null,null,null,null];
+  if (type === 'team') newSec.members = [{name:'Prénom Nom',role:'Rôle',emoji:'👤'}];
+  if (type === 'pricing') newSec.plans = [{name:'Standard',price:'90€',features:['Service 1','Service 2'],highlight:false},{name:'Premium',price:'150€',features:['Tout inclus'],highlight:true}];
+  if (type === 'blog') newSec.posts = [{emoji:'📝',title:'Article 1',date:'2025',excerpt:'Résumé de l\'article...'}];
+  if (type === 'text-image') { newSec.title='Notre histoire'; newSec.text='Texte à personnaliser...'; newSec.imageLeft=false; }
+  if (type === 'contact') { newSec.bg=state.accentColor; newSec.color='#fff'; newSec.title='Contactez-nous'; newSec.subtitle='Un projet ?'; newSec.tel=state.tel; newSec.email=state.email; }
+  if (type === 'hero') { newSec.bg='#1a3a2a'; newSec.color='#fff'; newSec.title=state.companyName; newSec.subtitle='Artisan professionnel'; newSec.cta='Devis gratuit'; newSec.ctaColor=state.accentColor; }
+  if (type === 'nav') { newSec.bg=state.accentColor; newSec.logo=state.companyName; }
+  if (type === 'section-title') { newSec.title='Titre'; newSec.subtitle='Sous-titre'; }
+
+  // Insert before last section if last is contact/legal
+  const last = page.sections[page.sections.length - 1];
+  if (last && (last.type === 'contact' || last.type === 'legal')) {
+    page.sections.splice(page.sections.length - 1, 0, newSec);
+  } else {
+    page.sections.push(newSec);
+  }
+  renderCanvas();
+  showToast('Bloc ajouté !');
+  setTimeout(() => selectSection(newSec.id, null), 100);
+}
+
+function renderPhotosPanel(el) {
+  el.innerHTML = `<div class="lp-title">Mes Photos</div>
+    <div class="upload-zone" onclick="document.getElementById('photo-upload').click()">
+      <input type="file" id="photo-upload" accept="image/*" multiple onchange="handleUpload(this)" />
+      <div style="font-size:2rem;margin-bottom:.5rem">📷</div>
+      <div style="font-size:.85rem;color:var(--muted)">Cliquez pour uploader<br/>JPG, PNG, WebP</div>
+    </div>
+    <div class="photo-grid" id="photo-grid" style="margin-top:1rem">
+      ${Object.entries(uploadedPhotos).map(([k,v]) => `
+        <div class="photo-thumb">
+          <img src="${v}" alt="${k}"/>
+        </div>`).join('') || `<p style="color:var(--muted);font-size:.82rem;grid-column:span 2">Aucune photo uploadée</p>`}
+    </div>`;
+}
+
+function handleUpload(input) {
+  Array.from(input.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      uploadedPhotos[file.name] = e.target.result;
+      renderPhotosPanel(document.getElementById('lp-inner'));
+      showToast('Photo ajoutée !');
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function pickPhoto(secId, slot) {
+  // Show photo picker
+  const photos = Object.values(uploadedPhotos);
+  if (!photos.length) {
+    showToast('⚠️ Uploadez d\'abord des photos');
+    toggleLeftPanel('photos');
+    return;
+  }
+  // Use first available photo for demo
+  const page = getCurrentPage();
+  const sec = page.sections.find(s => s.id === secId);
+  if (sec && sec.images) {
+    // Prompt-free: cycle through uploaded photos
+    sec.images[slot] = photos[slot % photos.length];
+    renderCanvas();
+    showToast('Photo mise à jour !');
+  }
+}
+
+function pickPhotoMain(secId) {
+  const photos = Object.values(uploadedPhotos);
+  if (!photos.length) { showToast('⚠️ Uploadez d\'abord des photos'); toggleLeftPanel('photos'); return; }
+  const page = getCurrentPage();
+  const sec = page.sections.find(s => s.id === secId);
+  if (sec) { sec.image = photos[0]; renderCanvas(); showToast('Photo mise à jour !'); }
+}
+
+function renderTextsPanel(el) {
+  el.innerHTML = `<div class="lp-title">Infos générales</div>
+    <div class="field"><label>Nom entreprise</label><input type="text" value="${state.companyName}" oninput="updateState('companyName',this.value)"/></div>
+    <div class="field"><label>Métier</label>
+      <select onchange="updateState('metier',this.value)">
+        ${['plombier','electricien','macon','peintre','menuisier','couvreur','carreleur','autre'].map(m=>`<option value="${m}" ${state.metier===m?'selected':''}>${m.charAt(0).toUpperCase()+m.slice(1)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field"><label>Ville</label><input type="text" value="${state.ville}" oninput="updateState('ville',this.value)"/></div>
+    <div class="field"><label>Téléphone</label><input type="text" value="${state.tel}" oninput="updateState('tel',this.value)"/></div>
+    <div class="field"><label>Email</label><input type="email" value="${state.email}" oninput="updateState('email',this.value)"/></div>`;
+}
+
+function renderDesignPanel(el) {
+  el.innerHTML = `<div class="lp-title">Design global</div>
+    <div class="field">
+      <label>Couleur principale</label>
+      <div class="color-row">
+        ${COLORS.map(c=>`<div class="csw ${state.accentColor===c?'sel':''}" style="background:${c}" onclick="setGlobalColor('${c}')"></div>`).join('')}
+        <input type="color" value="${state.accentColor}" onchange="setGlobalColor(this.value)" style="width:28px;height:28px;padding:2px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:none"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Police</label>
+      <select onchange="updateState('fontFamily',this.value);renderCanvas()">
+        ${['Syne','Playfair Display','DM Sans','Montserrat','Oswald','Roboto Slab'].map(f=>`<option ${state.fontFamily===f?'selected':''}>${f}</option>`).join('')}
+      </select>
+    </div>`;
+}
+
+function renderSeoPanel(el) {
+  el.innerHTML = `<div class="lp-title">SEO</div>
+    <div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.8rem;margin-bottom:1rem;text-align:center">
+      <div style="font-size:1.6rem;font-weight:800;color:#22c55e">89</div>
+      <div style="font-size:.72rem;color:var(--muted)">Score SEO</div>
+    </div>
+    <div class="field"><label>Titre SEO (title)</label><input type="text" placeholder="${state.metier} ${state.ville} — ${state.companyName}"/></div>
+    <div class="field"><label>Meta description</label><textarea placeholder="Description courte du site (150 car max)..."></textarea></div>
+    <div class="field"><label>Mots-clés</label><input type="text" placeholder="${state.metier} ${state.ville}, artisan, devis..."/></div>
+    <div class="field"><label>Google Analytics ID</label><input type="text" placeholder="G-XXXXXXXXXX"/></div>
+    <div class="field">
+      <div class="toggle-row"><span>Sitemap XML auto</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+      <div class="toggle-row"><span>Schema.org LocalBusiness</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+      <div class="toggle-row"><span>Open Graph réseaux sociaux</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// GLOBAL STATE UPDATES
+// ══════════════════════════════════════════════════════════
+function updateState(key, val) {
+  state[key] = val;
+  renderCanvas();
+}
+
+function setGlobalColor(c) {
+  state.accentColor = c;
+  // Update all sections that use accent color
+  state.pages.forEach(p => p.sections.forEach(s => {
+    if (s.ctaColor) s.ctaColor = c;
+    if (s.type === 'nav') s.bg = c;
+    if (s.type === 'contact') s.bg = c;
+  }));
+  renderCanvas();
+  renderDesignPanel(document.getElementById('lp-inner'));
+  showToast('Couleur mise à jour !');
+}
+
+// ══════════════════════════════════════════════════════════
+// DEVICE
+// ══════════════════════════════════════════════════════════
+function setDevice(mode, btn) {
+  const wrap = document.getElementById('canvas-wrap');
+  wrap.className = 'canvas-wrap ' + (mode !== 'desktop' ? mode : '');
+  document.querySelectorAll('.dev-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════
+// INLINE TEXT FORMAT
+// ══════════════════════════════════════════════════════════
+function showInlineBar() { document.getElementById('inline-bar').classList.add('visible'); }
+function hideInlineBar() { document.getElementById('inline-bar').classList.remove('visible'); }
+function fmt(cmd, val) {
+  if (cmd === 'fontSize') {
+    document.execCommand('fontSize', false, '7');
+    const els = document.querySelectorAll('font[size="7"]');
+    els.forEach(el => { el.removeAttribute('size'); el.style.fontSize = val + 'px'; });
+  } else if (cmd === 'foreColor') {
+    document.execCommand('foreColor', false, val);
+  } else {
+    document.execCommand(cmd, false, null);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// UNDO / REDO (simplified)
+// ══════════════════════════════════════════════════════════
+function undo() { showToast('↩ Annulé'); }
+function redo() { showToast('↪ Rétabli'); }
+
+// ══════════════════════════════════════════════════════════
+// PREVIEW
+// ══════════════════════════════════════════════════════════
+function openPreview() {
+  const html = exportPage(getCurrentPage());
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORT & PUBLISH
+// ══════════════════════════════════════════════════════════
+function openPublish() { document.getElementById('modal-publish').classList.add('open'); }
+function closePublish() { document.getElementById('modal-publish').classList.remove('open'); }
+
+function exportPage(page) {
+  const c = state.accentColor;
+  const sectionsHTML = page.sections.map(sec => {
+    // Get rendered HTML from canvas
+    const el = document.querySelector(`[data-id="${sec.id}"]`);
+    if (!el) return renderSectionForExport(sec);
+    // Clone and clean
+    const clone = el.cloneNode(true);
+    clone.querySelector('.section-overlay')?.remove();
+    clone.removeAttribute('onclick');
+    clone.removeAttribute('data-id');
+    return clone.outerHTML;
+  }).join('\n');
+
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>${page.name} — ${state.companyName}</title>
+<meta name="description" content="${state.companyName}, ${state.metier} à ${state.ville}. Devis gratuit."/>
+<meta name="keywords" content="${state.metier} ${state.ville}, artisan ${state.ville}, devis gratuit"/>
+<link rel="canonical" href="https://monsitecom.com/${page.slug}"/>
+<meta property="og:title" content="${page.name} — ${state.companyName}"/>
+<meta property="og:description" content="${state.companyName}, ${state.metier} à ${state.ville}."/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"${state.companyName}","telephone":"${state.tel}","email":"${state.email}","address":{"@type":"PostalAddress","addressLocality":"${state.ville}","addressCountry":"FR"}}<\/script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=${state.fontFamily.replace(' ','+')}:wght@400;600;700;800&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--c:${c}}
+body{font-family:'Instrument Sans',sans-serif;background:#f5f2ec;color:#1a1814}
+.section-wrap{position:relative}
+.section-overlay{display:none}
+[data-editable]{outline:none}
+input,textarea,button{font-family:inherit}
+@media(max-width:768px){
+  section[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+  section[style*="grid-template-columns:repeat(4"]{grid-template-columns:1fr 1fr!important}
+  section[style*="grid-template-columns:repeat(3"]{grid-template-columns:1fr 1fr!important}
+  section[style*="padding:5rem 4rem"]{padding:3rem 1.5rem!important}
+  section[style*="padding:4rem"]{padding:2.5rem 1.5rem!important}
+  section[style*="padding:3.5rem 4rem"]{padding:2rem 1.5rem!important}
+  nav{flex-wrap:wrap;gap:.5rem;padding:1rem!important}
+}
+</style>
+</head>
+<body>
+${sectionsHTML}
+<script>
+// Lead form
+function submitLead(){
+  const n=document.getElementById('f-n'),t=document.getElementById('f-t');
+  if(n&&t&&(!n.value||!t.value)){alert('Merci de renseigner nom et téléphone.');return;}
+  document.querySelectorAll('.lead-form').forEach(f=>f.style.display='none');
+  document.querySelectorAll('.lead-ok').forEach(f=>f.style.display='block');
+}
+// Scroll reveal
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.style.opacity=1}),{threshold:.1});
+document.querySelectorAll('[style*="opacity:0"]').forEach(el=>obs.observe(el));
+<\/script>
+</body>
+</html>`;
+}
+
+function renderSectionForExport(sec) {
+  const el = document.querySelector(`[data-id="${sec.id}"]`);
+  if (!el) return '';
+  const clone = el.cloneNode(true);
+  clone.querySelector('.section-overlay')?.remove();
+  return clone.outerHTML;
+}
+
+function downloadAll() {
+  state.pages.forEach((page, i) => {
+    setTimeout(() => {
+      const html = exportPage(page);
+      const blob = new Blob([html], {type:'text/html'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = page.slug === 'accueil' ? 'index.html' : page.slug + '.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }, i * 400);
+  });
+  showToast('📥 Téléchargement de ' + state.pages.length + ' fichiers...');
+  setTimeout(closePublish, 1000);
+}
+
+// ══════════════════════════════════════════════════════════
+// MENTIONS LÉGALES
+// ══════════════════════════════════════════════════════════
+function openMentions() { document.getElementById('modal-mentions').classList.add('open'); }
+function closeMentions() { document.getElementById('modal-mentions').classList.remove('open'); showToast('Mentions légales enregistrées !'); }
+function updateML(field, val) {
+  state.legalInfo[field] = val;
+  const el = document.getElementById('ml-' + field);
+  if (el) el.textContent = val || `[${field}]`;
+  // Refresh legal page if active
+  const legalPage = state.pages.find(p => p.name === 'Mentions légales');
+  if (legalPage) legalPage.sections = [];
+}
+
+// ══════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════
+function getCurrentPage() { return state.pages[state.currentPage]; }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+}
+</script>
+</body>
+</html>

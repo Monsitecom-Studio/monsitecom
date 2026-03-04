@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>MonSiteCom — Créez votre site professionnel comme sur Wix</title>
+  <meta name="description" content="Créez un site internet professionnel optimisé SEO avec notre éditeur visuel. Idéal pour artisans du bâtiment. Leads qualifiés, mentions légales, 3/6/9 pages."/>
+  <link rel="canonical" href="https://monsitecom.com"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f5f2ec;--bg2:#edeae2;--ink:#1a1814;--ink2:#4a4640;--orange:#e8540a;--orange2:#ff6820;--white:#fdfcf8;--border:rgba(26,24,20,0.1);--fd:'Syne',sans-serif;--fb:'Instrument Sans',sans-serif}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--ink);font-family:var(--fb);overflow-x:hidden}
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 4rem;background:rgba(245,242,236,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+    .logo{font-family:var(--fd);font-weight:800;font-size:1.4rem;color:var(--ink);text-decoration:none}.logo span{color:var(--orange)}
+    .nav-r{display:flex;align-items:center;gap:2rem}
+    .nl{color:var(--ink2);text-decoration:none;font-size:.88rem;font-weight:500}
+    .nl:hover{color:var(--orange)}
+    .bn{background:var(--orange);color:var(--white);padding:.6rem 1.4rem;border-radius:6px;text-decoration:none;font-size:.88rem;font-weight:600;transition:background .2s}
+    .bn:hover{background:var(--orange2)}
+    #hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:8rem 4rem 4rem;gap:4rem;overflow:hidden;position:relative}
+    .hbg{position:absolute;right:-200px;top:-200px;width:800px;height:800px;background:radial-gradient(circle,rgba(232,84,10,.07) 0%,transparent 65%);pointer-events:none}
+    .htag{display:inline-flex;align-items:center;gap:.5rem;background:rgba(232,84,10,.1);border:1px solid rgba(232,84,10,.2);color:var(--orange);font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.4rem 1rem;border-radius:999px;margin-bottom:1.5rem;animation:fu .7s .1s ease both}
+    .htag::before{content:'';width:6px;height:6px;background:var(--orange);border-radius:50%;animation:bl 1.4s infinite}
+    h1{font-family:var(--fd);font-size:clamp(2.6rem,5vw,4.5rem);font-weight:800;line-height:1.0;letter-spacing:-.03em;margin-bottom:1.5rem;animation:fu .7s .25s ease both}
+    .hl{color:var(--orange);border-bottom:3px solid var(--orange)}
+    .hd{font-size:1.05rem;color:var(--ink2);line-height:1.7;margin-bottom:2.5rem;max-width:480px;animation:fu .7s .4s ease both}
+    .ha{display:flex;align-items:center;gap:1.2rem;animation:fu .7s .55s ease both}
+    .bp{background:var(--orange);color:var(--white);padding:1rem 2rem;border-radius:8px;text-decoration:none;font-size:.95rem;font-weight:600;display:inline-flex;align-items:center;gap:.5rem;box-shadow:0 4px 20px rgba(232,84,10,.3);transition:all .2s}
+    .bp:hover{background:var(--orange2);transform:translateY(-2px)}
+    .bs{color:var(--ink);font-size:.9rem;font-weight:500;text-decoration:none;opacity:.7}
+    .bs:hover{opacity:1}
+    .hst{display:flex;gap:2rem;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border);animation:fu .7s .7s ease both}
+    .si strong{display:block;font-family:var(--fd);font-size:1.8rem;font-weight:800;color:var(--orange)}
+    .si span{font-size:.82rem;color:var(--ink2)}
+    /* editor mockup */
+    .hmock{animation:fu .8s .3s ease both}
+    .emock{background:#0f0f13;border-radius:12px;overflow:hidden;box-shadow:0 24px 80px rgba(26,24,20,.25);border:1px solid rgba(255,255,255,.08)}
+    .etb{background:#18181f;padding:.6rem .8rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid rgba(255,255,255,.07)}
+    .ed{width:10px;height:10px;border-radius:50%}.ed:nth-child(1){background:#ff5f57}.ed:nth-child(2){background:#febc2e}.ed:nth-child(3){background:#28c840}
+    .eu{flex:1;background:rgba(255,255,255,.06);border-radius:4px;padding:.25rem .7rem;font-size:.65rem;color:rgba(255,255,255,.4);margin-left:.4rem}
+    .ebody{display:grid;grid-template-columns:36px 170px 1fr;height:280px}
+    .esb{background:#18181f;border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;align-items:center;padding:.4rem 0;gap:.3rem}
+    .esbb{width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:.65rem}
+    .ep{background:#1f1f28;border-right:1px solid rgba(255,255,255,.07);padding:.6rem}
+    .ept{font-size:.55rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.5rem}
+    .ebl{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:4px;padding:.4rem;margin-bottom:.3rem;font-size:.58rem;color:rgba(255,255,255,.5)}
+    .ebl.sel{border-color:#e8540a;background:rgba(232,84,10,.1);color:#e8540a}
+    .ec{background:white;display:flex;flex-direction:column;overflow:hidden}
+    .ecn{background:#0d6e3f;padding:.35rem .6rem;display:flex;justify-content:space-between;align-items:center}
+    .ecl{font-size:.55rem;font-weight:800;color:white}
+    .ech{background:#1a3a2a;flex:1;padding:.7rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;border:2px solid #e8540a}
+    .ect{color:white}.echh{font-size:.7rem;font-weight:800;line-height:1.1;margin-bottom:.25rem}.echp{font-size:.48rem;opacity:.6;margin-bottom:.4rem}
+    .ecb{background:#0d6e3f;color:white;font-size:.45rem;padding:.25rem .5rem;border-radius:3px;display:inline-block}
+    .efb{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:.5rem}
+    .efi{background:rgba(255,255,255,.07);border:none;height:10px;border-radius:2px;width:100%;margin-bottom:.3rem}
+    .efbtn{background:#0d6e3f;height:12px;border-radius:2px;width:100%}
+    /* sections */
+    section.s{padding:6rem 4rem}
+    .sh{text-align:center;margin-bottom:4rem}
+    .stag{display:inline-block;font-size:.75rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);margin-bottom:1rem}
+    h2{font-family:var(--fd);font-size:clamp(2rem,3.5vw,3rem);font-weight:800;letter-spacing:-.02em;margin-bottom:1rem}
+    .sd{color:var(--ink2);font-size:1rem;max-width:520px;margin:0 auto}
+    .fg{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1100px;margin:0 auto}
+    .fc{padding:2rem;border:1px solid var(--border);border-radius:12px;background:var(--bg);transition:all .3s;position:relative;overflow:hidden}
+    .fc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--orange);transform:scaleX(0);transition:transform .35s;transform-origin:left}
+    .fc:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(26,24,20,.1);border-color:rgba(232,84,10,.2)}.fc:hover::before{transform:scaleX(1)}
+    .fi{font-size:2rem;margin-bottom:1rem;display:block}
+    .fc h3{font-family:var(--fd);font-size:1.1rem;font-weight:700;margin-bottom:.7rem}
+    .fc p{font-size:.88rem;color:var(--ink2);line-height:1.6}
+    .pf{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;max-width:1100px;margin:0 auto}
+    .pg{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .pc{border:2px solid var(--border);border-radius:12px;padding:1.5rem;text-align:center;background:var(--white);transition:all .25s}
+    .pc:hover,.pc.pop{border-color:var(--orange)}
+    .pn{font-family:var(--fd);font-size:3rem;font-weight:800;color:var(--orange);display:block}
+    .pl{font-size:.78rem;font-weight:600;color:var(--ink2);display:block;margin-top:.2rem;text-transform:uppercase;letter-spacing:.08em}
+    .plist{font-size:.75rem;color:var(--ink2);margin-top:.8rem;text-align:left;line-height:2}
+    .dark{background:var(--ink);color:var(--white)}
+    .stps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;max-width:1100px;margin:4rem auto 0;position:relative}
+    .stps::before{content:'';position:absolute;top:28px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent)}
+    .stp{text-align:center;padding:2rem 1.5rem}
+    .stn{width:56px;height:56px;border-radius:50%;background:var(--orange);color:white;font-family:var(--fd);font-size:1.2rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;box-shadow:0 4px 20px rgba(232,84,10,.4)}
+    .stp h3{font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:.6rem}
+    .stp p{font-size:.84rem;color:rgba(255,255,255,.5)}
+    .scg{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;max-width:1100px;margin:3rem auto 0}
+    .sc{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .25s;text-decoration:none;color:var(--ink)}
+    .sc:hover{border-color:var(--orange);transform:translateY(-4px)}
+    .sci{font-size:2.2rem;margin-bottom:.8rem;display:block}
+    .sc h3{font-family:var(--fd);font-size:.95rem;font-weight:700;margin-bottom:.3rem}
+    .sc p{font-size:.78rem;color:var(--ink2)}
+    .cta-s{padding:7rem 4rem;background:var(--orange);text-align:center}
+    .cta-s h2{color:white;font-size:clamp(2rem,4vw,3.2rem)}
+    .cta-s p{color:rgba(255,255,255,.85);margin:1rem auto 2.5rem;max-width:500px}
+    .bw{background:var(--white);color:var(--orange);padding:1rem 2.2rem;border-radius:8px;text-decoration:none;font-weight:700;font-size:1rem;display:inline-flex;align-items:center;gap:.5rem;box-shadow:0 4px 24px rgba(0,0,0,.15);transition:all .2s}
+    .bw:hover{transform:translateY(-3px)}
+    footer{background:var(--ink);color:rgba(255,255,255,.5);padding:3rem 4rem;display:flex;align-items:center;justify-content:space-between;font-size:.82rem}
+    footer .logo{color:var(--white);font-size:1.1rem}
+    footer a{color:rgba(255,255,255,.4);text-decoration:none}
+    footer a:hover{color:var(--orange)}
+    footer nav{display:flex;gap:2rem}
+    .rv{opacity:0;transform:translateY(28px);transition:opacity .65s,transform .65s}.rv.v{opacity:1;transform:translateY(0)}
+    @keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+    @media(max-width:900px){nav{padding:1.2rem 1.5rem}.nl{display:none}#hero{grid-template-columns:1fr;padding:7rem 1.5rem 3rem}.hmock{display:none}section.s{padding:4rem 1.5rem}.fg,.pf,.stps,.scg{grid-template-columns:1fr 1fr}.cta-s{padding:4rem 1.5rem}footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem 1.5rem}}
+    @media(max-width:560px){.fg,.stps,.scg,.pg{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">MonSite<span>Com</span></a>
+  <div class="nav-r">
+    <a href="#features" class="nl">Fonctionnalités</a>
+    <a href="#plans" class="nl">Formules</a>
+    <a href="#secteurs" class="nl">Secteurs</a>
+    <a href="editeur.html" class="bn">✨ Créer mon site →</a>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="hbg"></div>
+  <div>
+    <div class="htag">🚀 Éditeur visuel complet — Drag & Drop</div>
+    <h1>Créez votre site<br/><span class="hl">comme un pro</span><br/>en 10 minutes</h1>
+    <p class="hd">Éditeur visuel type Wix. 3, 6 ou 9 pages. Modifiez tout en cliquant, uploadez vos photos, générez vos leads, mentions légales incluses. Pour artisans du bâtiment.</p>
+    <div class="ha">
+      <a href="editeur.html" class="bp">✨ Ouvrir l'éditeur <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <a href="#plans" class="bs">Voir les formules ↓</a>
+    </div>
+    <div class="hst">
+      <div class="si"><strong>3/6/9</strong><span>Pages au choix</span></div>
+      <div class="si"><strong>13+</strong><span>Types de blocs</span></div>
+      <div class="si"><strong>SEO</strong><span>100% intégré</span></div>
+    </div>
+  </div>
+  <div class="hmock">
+    <div class="emock">
+      <div class="etb"><div class="ed"></div><div class="ed"></div><div class="ed"></div><div class="eu">monsitecom.com — Éditeur</div><span style="font-size:.6rem;background:#e8540a;color:white;padding:.15rem .5rem;border-radius:3px;margin-left:.4rem">🚀 Publier</span></div>
+      <div class="ebody">
+        <div class="esb"><div class="esbb">📄</div><div class="esbb" style="background:rgba(232,84,10,.2);color:#e8540a">⊞</div><div class="esbb">🖼</div><div class="esbb">🎨</div><div class="esbb">🔍</div></div>
+        <div class="ep"><div class="ept">Blocs</div><div class="ebl sel">🦸 Hero + Leads</div><div class="ebl">📊 Statistiques</div><div class="ebl">🃏 Services</div><div class="ebl">🖼 Galerie</div><div class="ebl">⭐ Avis</div><div class="ebl">💰 Tarifs</div><div class="ebl">⚖️ Mentions légales</div></div>
+        <div class="ec"><div class="ecn"><span class="ecl">🏠 Dupont Plomberie</span><span style="font-size:.45rem;color:rgba(255,255,255,.7)">Accueil · Services · Contact</span></div>
+          <div class="ech"><div class="ect"><div class="echh">Plombier Paris 15<br/>Intervention rapide</div><div class="echp">Devis gratuit 2h — 7j/7</div><div class="ecb">📋 Devis gratuit</div></div>
+          <div class="efb"><div class="efi"></div><div class="efi"></div><div class="efi"></div><div class="efbtn"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="s" style="background:var(--white);border-top:1px solid var(--border)">
+  <div class="sh rv"><span class="stag">Fonctionnalités</span><h2>Un vrai éditeur visuel, pas un template figé</h2><p class="sd">Modifiez chaque élément, ajoutez vos blocs, uploadez vos photos. Votre site, à votre image.</p></div>
+  <div class="fg">
+    <div class="fc rv"><span class="fi">🖱</span><h3>Éditeur cliquable</h3><p>Cliquez sur n'importe quel texte pour le modifier directement. Déplacez, dupliquez, supprimez les sections.</p></div>
+    <div class="fc rv"><span class="fi">📄</span><h3>3, 6 ou 9 pages</h3><p>Choisissez votre formule : Starter, Pro ou Expert. Ajoutez ou supprimez des pages à tout moment.</p></div>
+    <div class="fc rv"><span class="fi">🖼</span><h3>Upload de photos</h3><p>Uploadez vos vraies photos de chantier depuis votre ordinateur. Intégration directe dans les galeries.</p></div>
+    <div class="fc rv"><span class="fi">🎨</span><h3>Design personnalisable</h3><p>Couleur principale, police, fond de chaque section. Votre identité visuelle partout.</p></div>
+    <div class="fc rv"><span class="fi">📩</span><h3>Leads intégrés</h3><p>Formulaire de devis dans chaque page. Connectez Formspree pour recevoir les leads par email.</p></div>
+    <div class="fc rv"><span class="fi">⚖️</span><h3>Mentions légales & RGPD</h3><p>Page mentions légales auto-générée avec votre SIRET, adresse, forme juridique. Conforme RGPD.</p></div>
+    <div class="fc rv"><span class="fi">🔍</span><h3>SEO local optimisé</h3><p>Title, meta, Schema.org LocalBusiness, Open Graph. Score SEO en temps réel. Top Google local.</p></div>
+    <div class="fc rv"><span class="fi">📱</span><h3>Aperçu multi-device</h3><p>Visualisez en desktop, tablette ou mobile. 100% responsive garanti.</p></div>
+    <div class="fc rv"><span class="fi">📥</span><h3>Export GitHub Pages</h3><p>Téléchargez tous vos fichiers HTML. Déployez sur GitHub, liez votre domaine Hostinger.</p></div>
+  </div>
+</section>
+
+<section id="plans" class="s">
+  <div class="pf">
+    <div class="rv"><span class="stag">Formules</span><h2>Choisissez le nombre de pages</h2><p style="color:var(--ink2);margin:1rem 0 2rem">Commencez simplement avec 3 pages, puis évoluez. Ajoutez des pages à tout moment dans l'éditeur.</p><a href="editeur.html" class="bp">Démarrer l'éditeur →</a></div>
+    <div>
+      <div class="pg">
+        <div class="pc rv"><span class="pn">3</span><span class="pl">Starter</span><div class="plist">✓ Accueil<br/>✓ Services<br/>✓ Contact</div></div>
+        <div class="pc pop rv"><span class="pn">6</span><span class="pl">Pro ⭐</span><div class="plist">✓ Accueil<br/>✓ À propos<br/>✓ Services<br/>✓ Réalisations<br/>✓ Témoignages<br/>✓ Contact</div></div>
+        <div class="pc rv"><span class="pn">9</span><span class="pl">Expert</span><div class="plist">✓ Accueil<br/>✓ À propos<br/>✓ Équipe<br/>✓ Services<br/>✓ Tarifs<br/>✓ Réalisations<br/>✓ Blog<br/>✓ Témoignages<br/>✓ Contact</div></div>
+      </div>
+      <p style="font-size:.78rem;color:var(--ink2);margin-top:1rem;text-align:center">+ Mentions légales incluses dans toutes les formules</p>
+    </div>
+  </div>
+</section>
+
+<section class="s dark">
+  <div class="sh rv"><span class="stag" style="color:#ff6820">Comment ça marche</span><h2 style="color:white">En ligne en 4 étapes</h2><p class="sd" style="color:rgba(255,255,255,.5)">De zéro à votre site en ligne en moins d'une heure.</p></div>
+  <div class="stps">
+    <div class="stp rv"><div class="stn">1</div><h3 style="color:white">Choisissez votre formule</h3><p>3, 6 ou 9 pages. Le site se génère automatiquement.</p></div>
+    <div class="stp rv"><div class="stn">2</div><h3 style="color:white">Personnalisez tout</h3><p>Textes, photos, couleurs, blocs. Votre identité en quelques clics.</p></div>
+    <div class="stp rv"><div class="stn">3</div><h3 style="color:white">Téléchargez & GitHub</h3><p>Exportez vos fichiers, uploadez sur GitHub Pages.</p></div>
+    <div class="stp rv"><div class="stn">4</div><h3 style="color:white">Liez votre domaine</h3><p>4 enregistrements DNS Hostinger — c'est en ligne.</p></div>
+  </div>
+</section>
+
+<section id="secteurs" class="s">
+  <div class="sh rv"><span class="stag">Secteurs</span><h2>Optimisé pour votre métier</h2><p class="sd">Templates et mots-clés SEO spécifiques à chaque corps de métier.</p></div>
+  <div class="scg">
+    <a href="editeur.html" class="sc rv"><span class="sci">🔧</span><h3>Plombier</h3><p>Dépannage, chauffage</p></a>
+    <a href="editeur.html" class="sc rv"><span class="sci">⚡</span><h3>Électricien</h3><p>Installation, normes</p></a>
+    <a href="editeur.html" class="sc rv"><span class="sci">🏗️</span><h3>Maçon</h3><p>Construction, rénovation</p></a>
+    <a href="editeur.html" class="sc rv"><span class="sci">🎨</span><h3>Peintre</h3><p>Intérieur, extérieur</p></a>
+    <a href="editeur.html" class="sc rv"><span class="sci">🪚</span><h3>Menuisier</h3><p>Portes, fenêtres</p></a>
+    <a href="editeur.html" class="sc rv"><span class="sci">🏠</span><h3>Couvreur</h3><p>Toiture, isolation</p></a>
+    <a href="editeur.html" class="sc rv"><span class="sci">🟫</span><h3>Carreleur</h3><p>Sols, murs</p></a>
+    <a href="editeur.html" class="sc rv"><span class="sci">🛠️</span><h3>Autre</h3><p>Votre activité</p></a>
+  </div>
+</section>
+
+<section class="cta-s">
+  <h2 class="rv">Prêt à décrocher plus de chantiers ?</h2>
+  <p class="rv">Créez votre site professionnel maintenant. Gratuit, rapide, en ligne aujourd'hui.</p>
+  <a href="editeur.html" class="bw rv">✨ Ouvrir l'éditeur gratuitement <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+</section>
+
+<footer>
+  <a href="#" class="logo">MonSite<span>Com</span></a>
+  <nav><a href="editeur.html">Éditeur</a><a href="#">Mentions légales</a><a href="#">CGU</a><a href="#">Contact</a></nav>
+  <p>© 2025 MonSiteCom.com</p>
+</footer>
+
+<script>
+const obs=new IntersectionObserver(es=>es.forEach((e,i)=>{if(e.isIntersecting){e.target.style.transitionDelay=(i%6)*.07+'s';e.target.classList.add('v')}}),{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
